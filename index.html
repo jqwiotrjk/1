@@ -2,1034 +2,782 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>요뎡애긔겅듀의 멀미나는 총겜 원정대 | Ritming Fan Game</title>
+<title>요뎡애긔겅듀의 멀미나는 총겜 원정대 - Ritming Fan Game</title>
 <style>
-  :root {
-    --bg: #0e0c16;
-    --panel: #181426;
-    --panel-alt: #231d36;
-    --border: #4a3a7a;
-    --accent: #9b7aff;
-    --accent-hi: #b99eff;
-    --pink: #ff9ce3;
-    --mint: #67e87b;
-    --gold: #f5c84c;
-    --crimson: #ff5773;
-    --text: #f5f2fc;
-    --sub: #b7a9d9;
-  }
-
-  * {
-    box-sizing: border-box;
-    user-select: none;
-  }
-
-  html, body {
+  @import url('https://fonts.googleapis.com/css2?family=DungGeunMo&display=swap');
+  * { box-sizing: border-box; user-select: none; }
+  body {
     margin: 0;
-    padding: 0;
-    min-height: 100%;
-    background:
-      radial-gradient(circle at 15% 15%, rgba(155, 122, 255, 0.16), transparent 42%),
-      radial-gradient(circle at 85% 85%, rgba(255, 156, 227, 0.12), transparent 42%),
-      var(--bg);
-    color: var(--text);
-    font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  }
-
-  .page-wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 18px 14px 36px;
-  }
-
-  .top-bar {
+    background: #111018;
+    color: #f3effa;
+    font-family: 'DungGeunMo', monospace, sans-serif;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    background: var(--panel);
-    border: 2px solid var(--border);
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    padding: 14px 18px;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
   }
-
-  .title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--pink);
-    background: rgba(255, 156, 227, 0.14);
-    border: 1px solid rgba(255, 156, 227, 0.45);
-    padding: 4px 9px;
-    border-radius: 999px;
-  }
-
-  .game-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: -0.2px;
-  }
-
-  .btn-secondary {
-    background: var(--panel-alt);
-    color: var(--text);
-    border: 1px solid var(--border);
+  #game-wrap {
+    position: relative;
+    width: 800px;
+    border: 4px solid #8e6cef;
     border-radius: 8px;
-    padding: 8px 13px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
+    background: #1b1826;
+    box-shadow: 0 0 30px rgba(142, 108, 239, 0.35);
   }
-
-  .btn-secondary:hover {
-    border-color: var(--accent-hi);
-    background: #2e2547;
-  }
-
-  .hud {
+  #hud {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    background: var(--panel-alt);
-    border-left: 2px solid var(--border);
-    border-right: 2px solid var(--border);
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: 700;
+    align-items: center;
+    padding: 10px 16px;
+    background: #252036;
+    border-bottom: 3px solid #483b73;
+    font-size: 16px;
   }
-
-  .meter-box {
+  .bar-box {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-
-  .meter-track {
-    width: 132px;
-    height: 13px;
-    background: #100d1a;
-    border: 1px solid #6d59ad;
-    border-radius: 999px;
-    overflow: hidden;
+  .bar-bg {
+    width: 130px;
+    height: 14px;
+    background: #120f1c;
+    border: 2px solid #6b5b9e;
   }
-
-  #nausea-bar {
+  #nausea-fill {
     width: 10%;
     height: 100%;
-    background: var(--mint);
-    transition: width 0.2s ease, background-color 0.2s ease;
+    background: #67e87b;
+    transition: width 0.2s, background 0.2s;
   }
-
-  .viewport {
-    position: relative;
-    background: #141120;
-    border: 2px solid var(--border);
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.48);
-  }
-
-  #game-canvas {
+  canvas {
     display: block;
-    width: 100%;
-    height: auto;
-    background: #141120;
+    background: #161420;
+    image-rendering: pixelated;
   }
-
-  #dialog-panel {
+  #dialog-box {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    min-height: 136px;
-    background: rgba(16, 13, 27, 0.96);
-    border: 2px solid var(--accent-hi);
-    border-radius: 10px;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
+    min-height: 125px;
+    background: rgba(18, 15, 29, 0.95);
+    border: 3px solid #c3a6ff;
+    border-radius: 6px;
     padding: 14px 18px;
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    z-index: 20;
+    z-index: 10;
   }
-
-  #dialog-speaker {
-    color: var(--pink);
-    font-size: 15px;
-    font-weight: 800;
+  #speaker {
+    color: #ff9ce3;
+    font-size: 17px;
     margin-bottom: 6px;
   }
-
-  #dialog-body {
-    color: var(--text);
-    font-size: 15px;
+  #dialog-text {
+    font-size: 16px;
     line-height: 1.55;
+    color: #ffffff;
     white-space: pre-line;
   }
-
-  #dialog-choices {
+  #choices {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
     margin-top: 10px;
+    flex-wrap: wrap;
   }
-
   .choice-btn {
-    background: #30254d;
-    color: #ffffff;
-    border: 1px solid var(--accent-hi);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13.5px;
-    font-weight: 700;
+    background: #352b54;
+    color: #ffe6fa;
+    border: 2px solid #9d7ef5;
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 15px;
     cursor: pointer;
   }
-
   .choice-btn:hover {
-    background: #483773;
+    background: #58468c;
   }
-
-  #dialog-tip {
+  #next-hint {
     align-self: flex-end;
-    font-size: 12px;
-    color: var(--sub);
-    margin-top: 6px;
+    font-size: 13px;
+    color: #b7a8db;
+    margin-top: 4px;
   }
-
-  #start-overlay {
+  #overlay {
     position: absolute;
     inset: 0;
-    background: rgba(13, 10, 22, 0.95);
+    background: rgba(14, 12, 22, 0.94);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px 20px;
-    z-index: 30;
+    padding: 30px;
+    z-index: 20;
   }
-
-  #start-overlay h2 {
-    margin: 0 0 10px;
-    font-size: 26px;
-    color: var(--pink);
+  #overlay h1 {
+    color: #ff9ce3;
+    font-size: 30px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px #58359c;
   }
-
-  #start-overlay p {
-    margin: 0;
-    max-width: 580px;
-    color: var(--sub);
-    font-size: 14.5px;
-    line-height: 1.65;
+  #overlay p {
+    color: #d4c9ed;
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 560px;
   }
-
-  .tutorial-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    width: 100%;
-    max-width: 640px;
-    margin-top: 18px;
-    text-align: left;
-  }
-
-  .tut-card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 11px 12px;
-    font-size: 13px;
-    line-height: 1.45;
-  }
-
-  .tut-card strong {
-    display: block;
-    color: var(--accent-hi);
-    margin-bottom: 4px;
-    font-size: 13.5px;
-  }
-
-  .btn-start {
-    margin-top: 22px;
-    background: linear-gradient(135deg, var(--accent), #734fe8);
-    color: #ffffff;
-    border: 2px solid #e4daff;
-    border-radius: 10px;
-    padding: 13px 32px;
-    font-size: 17px;
-    font-weight: 800;
+  .main-btn {
+    margin-top: 20px;
+    padding: 12px 28px;
+    font-size: 18px;
+    font-family: inherit;
+    background: #8e6cef;
+    color: #fff;
+    border: 3px solid #e0cfff;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(155, 122, 255, 0.35);
   }
-
-  .btn-start:hover {
-    background: linear-gradient(135deg, var(--accent-hi), #8665f5);
+  .main-btn:hover {
+    background: #a587ff;
   }
-
-  .guide-footer {
-    margin-top: 14px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-size: 13.5px;
-    color: var(--sub);
-  }
-
-  .guide-footer strong {
-    color: var(--text);
-  }
-
-  @media (max-width: 640px) {
-    .tutorial-grid {
-      grid-template-columns: 1fr;
-    }
+  #controls-tip {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #9e91bf;
   }
 </style>
 </head>
 <body>
-  <div class="page-wrap">
-    <header class="top-bar">
-      <div class="title-group">
-        <span class="badge">RITMING FAN GAME</span>
-        <h1 class="game-title">요뎡애긔겅듀의 멀미나는 총겜 원정대</h1>
-      </div>
-      <button type="button" class="btn-secondary" id="btn-reset">↻ 새 게임 시작</button>
-    </header>
 
-    <div class="hud">
-      <div id="hud-stage">STAGE 0 : 튜토리얼</div>
-      <div class="meter-box">
-        <span>3D멀미</span>
-        <div class="meter-track"><div id="nausea-bar"></div></div>
-        <span id="nausea-pct">10%</span>
-      </div>
-      <div>
-        단서 <span id="clue-count">0/3</span> · 잔탄 <span id="ammo-count">0발</span> · <span id="play-clock">00:00</span>
-      </div>
+<div id="game-wrap">
+  <div id="hud">
+    <div id="stage-title">STAGE 0 : 방송 켜기 전 세팅</div>
+    <div class="bar-box">
+      <span>😵 3D멀미:</span>
+      <div class="bar-bg"><div id="nausea-fill"></div></div>
+      <span id="nausea-txt">10%</span>
     </div>
-
-    <main class="viewport">
-      <canvas id="game-canvas" width="840" height="480"></canvas>
-
-      <div id="dialog-panel">
-        <div>
-          <div id="dialog-speaker">리트밍</div>
-          <div id="dialog-body"></div>
-          <div id="dialog-choices"></div>
-        </div>
-        <div id="dialog-tip">[SPACE / ENTER / 클릭] 다음</div>
-      </div>
-
-      <section id="start-overlay">
-        <h2>요뎡애긔겅듀의 멀미나는 총겜 원정대</h2>
-        <p>
-          3D 멀미가 심하지만 총게임과 스토리·인디 게임을 사랑하는 스트리머의 약 10분 팬 게임입니다.<br>
-          게임 속 단서와 선택지에 따라 <strong>좋은 엔딩 / 나쁜 엔딩 / 히든 엔딩</strong>으로 갈립니다.
-        </p>
-
-        <div class="tutorial-grid">
-          <div class="tut-card">
-            <strong>1. 이동 & 조사</strong>
-            [WASD / 방향키]로 움직이고, 오브젝트·NPC 앞에서 [SPACE / E]를 눌러 대화하거나 조사하세요.
-          </div>
-          <div class="tut-card">
-            <strong>2. 3D 멀미 관리</strong>
-            멀미가 100%가 되면 나쁜 엔딩! [Q] 키로 허세 텐션을 끌어올리면 멀미가 12% 줄어듭니다.
-          </div>
-          <div class="tut-card">
-            <strong>3. 엔딩 공략 힌트</strong>
-            0발 심리전, 미궁 단서·픽업 석상 수집, 그리고 낮은 멀미 수치 유지가 히든 엔딩의 열쇠입니다.
-          </div>
-        </div>
-
-        <button type="button" class="btn-start" id="btn-start">▶ 게임 시작 (START)</button>
-      </section>
-    </main>
-
-    <footer class="guide-footer">
-      <div><strong>이동:</strong> WASD / 방향키</div>
-      <div><strong>조사·선택 진행:</strong> SPACE / E / 클릭</div>
-      <div><strong>멀미 진정 허세(-12%):</strong> Q</div>
-    </footer>
+    <div>🔫 잔탄: <span id="ammo-txt">0발</span> | ⏱️ <span id="timer-txt">00:00</span></div>
   </div>
 
-  <script>
-    (function () {
-      "use strict";
+  <canvas id="canvas" width="800" height="480"></canvas>
 
-      const canvas = document.getElementById("game-canvas");
-      const ctx = canvas.getContext("2d");
-      const startOverlay = document.getElementById("start-overlay");
-      const dialogPanel = document.getElementById("dialog-panel");
-      const speakerEl = document.getElementById("dialog-speaker");
-      const bodyEl = document.getElementById("dialog-body");
-      const choicesEl = document.getElementById("dialog-choices");
-      const tipEl = document.getElementById("dialog-tip");
+  <div id="dialog-box">
+    <div>
+      <div id="speaker">리트밍</div>
+      <div id="dialog-text"></div>
+      <div id="choices"></div>
+    </div>
+    <div id="next-hint">[SPACE / ENTER / 클릭] 으로 계속</div>
+  </div>
 
-      let audioCtx = null;
-      function playTone(freq, dur, wave, gainVal) {
-        try {
-          const AudioCtor = window.AudioContext || window.webkitAudioContext;
-          if (!AudioCtor) return;
-          if (!audioCtx) audioCtx = new AudioCtor();
-          if (audioCtx.state === "suspended") audioCtx.resume();
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = wave || "square";
-          osc.frequency.value = freq;
-          gain.gain.value = gainVal || 0.04;
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + (dur || 0.07));
-        } catch (_) {}
-      }
+  <div id="overlay">
+    <h1>🌸 요뎡애긔겅듀의 멀미나는 총겜 원정대 🌸</h1>
+    <p>
+      "3D 멀미가 심하지만 총게임은 절대 못 참는 종합게임 스트리머의 하루"<br><br>
+      총알은 0발, 멀미 게이지는 간당간당!<br>
+      방구석 방송 세팅부터 인디·스토리 미궁, 그리고 0발 랭크전까지<br>
+      센스와 입담으로 돌파해 엔딩을 확인하세요! (예상 플레이: 약 8~10분)
+    </p>
+    <button type="button" class="main-btn" id="start-btn">▶ 방송 켜기 (GAME START)</button>
+    <div id="controls-tip">이동: WASD / 방향키 | 조사·대화·행동: SPACE 또는 E | 허세 부리기(멀미 감소): Q</div>
+  </div>
+</div>
 
-      const state = {
-        active: false,
-        finished: false,
-        stage: 0,
-        nausea: 10,
-        ammo: 0,
-        startedAt: 0,
-        inDialog: false,
-        hasChoices: false,
-        dialogQueue: [],
-        onDialogComplete: null,
-        qCooldown: 0,
-        qAnim: 0,
-        shake: 0,
-        flags: {
-          drankTea: false,
-          zeroAmmoMindset: false,
-          foundNote: false,
-          pulledPickup: false,
-          solvedTrial: false
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const dialogBox = document.getElementById('dialog-box');
+const speakerEl = document.getElementById('speaker');
+const dialogTextEl = document.getElementById('dialog-text');
+const choicesEl = document.getElementById('choices');
+const nextHintEl = document.getElementById('next-hint');
+const overlay = document.getElementById('overlay');
+const startBtn = document.getElementById('start-btn');
+
+// 안전한 8-bit WebAudio 효과음 래퍼
+let audioCtx = null;
+function playBeep(freq, dur = 0.08, type = 'square', vol = 0.06) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    if (!audioCtx) audioCtx = new AudioContextClass();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.value = vol;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch (_) {
+    // 오디오 제한 환경에서도 게임 진행에 영향 없도록 무시
+  }
+}
+
+// 게임 상태
+const state = {
+  started: false,
+  stage: 0,
+  nausea: 10,
+  maxNausea: 100,
+  ammo: 0,
+  startTime: 0,
+  inDialog: false,
+  dialogQueue: [],
+  onDialogEnd: null,
+  waitingChoice: false,
+  flags: {},
+  poseCooldown: 0,
+  poseAnim: 0,
+  shake: 0,
+  gameOver: false
+};
+
+const player = { x: 120, y: 240, w: 28, h: 28, speed: 3.1, dir: 'down' };
+const keys = {};
+
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if ([' ', 'enter', 'e'].includes(e.key.toLowerCase())) {
+    if (state.inDialog && !state.waitingChoice) {
+      e.preventDefault();
+      advanceDialog();
+    } else if (!state.inDialog && state.started && !state.gameOver) {
+      interact();
+    }
+  }
+  if (e.key.toLowerCase() === 'q' && !state.inDialog && state.started && !state.gameOver) {
+    doPrincessPose();
+  }
+});
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+dialogBox.addEventListener('click', () => {
+  if (state.inDialog && !state.waitingChoice) advanceDialog();
+});
+
+function updateHUD() {
+  const fill = document.getElementById('nausea-fill');
+  const txt = document.getElementById('nausea-txt');
+  const ammoTxt = document.getElementById('ammo-txt');
+  state.nausea = Math.max(0, Math.min(100, Math.round(state.nausea)));
+  fill.style.width = state.nausea + '%';
+  txt.textContent = state.nausea + '%';
+  ammoTxt.textContent = state.ammo + '발';
+  if (state.nausea < 45) fill.style.background = '#67e87b';
+  else if (state.nausea < 75) fill.style.background = '#f5c84c';
+  else fill.style.background = '#ff5773';
+}
+
+function addNausea(amount) {
+  state.nausea += amount;
+  if (amount > 0) {
+    state.shake = 6;
+    playBeep(180, 0.12, 'sawtooth');
+  }
+  updateHUD();
+  if (state.nausea >= 100 && !state.gameOver) {
+    triggerEnding('nausea');
+  }
+}
+
+function doPrincessPose() {
+  if (state.poseCooldown > 0) return;
+  state.poseCooldown = 180;
+  state.poseAnim = 45;
+  addNausea(-12);
+  playBeep(520, 0.07);
+  setTimeout(() => playBeep(680, 0.09), 70);
+}
+
+// 대화 시스템
+function startDialog(lines, onEnd = null) {
+  state.inDialog = true;
+  state.dialogQueue = [...lines];
+  state.onDialogEnd = onEnd;
+  dialogBox.style.display = 'flex';
+  advanceDialog();
+}
+
+function advanceDialog() {
+  if (state.dialogQueue.length === 0) {
+    state.inDialog = false;
+    dialogBox.style.display = 'none';
+    choicesEl.innerHTML = '';
+    if (state.onDialogEnd) {
+      const cb = state.onDialogEnd;
+      state.onDialogEnd = null;
+      cb();
+    }
+    return;
+  }
+  const item = state.dialogQueue.shift();
+  speakerEl.textContent = item.name || '리트밍';
+  dialogTextEl.textContent = item.text;
+  choicesEl.innerHTML = '';
+  playBeep(420, 0.04, 'triangle');
+
+  if (item.choices) {
+    state.waitingChoice = true;
+    nextHintEl.style.display = 'none';
+    item.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choice-btn';
+      btn.textContent = c.label;
+      btn.onclick = (ev) => {
+        ev.stopPropagation();
+        state.waitingChoice = false;
+        nextHintEl.style.display = 'block';
+        if (c.nausea) addNausea(c.nausea);
+        if (c.flag) state.flags[c.flag] = true;
+        if (c.reply) {
+          state.dialogQueue.unshift(...c.reply);
         }
+        advanceDialog();
       };
+      choicesEl.appendChild(btn);
+    });
+  } else {
+    state.waitingChoice = false;
+    nextHintEl.style.display = 'block';
+  }
+}
 
-      const player = { x: 95, y: 225, w: 30, h: 30, speed: 3.2 };
-      const keys = {};
-      let walls = [];
-      let nodes = [];
-      let foes = [];
-      let shots = [];
+// 스테이지 데이터 구성
+let walls = [];
+let interactables = [];
+let enemies = [];
+let projectiles = [];
 
-      function getClueCount() {
-        let count = 0;
-        if (state.flags.foundNote) count++;
-        if (state.flags.pulledPickup) count++;
-        if (state.flags.solvedTrial) count++;
-        return count;
-      }
+function loadStage(num) {
+  state.stage = num;
+  walls = [];
+  interactables = [];
+  enemies = [];
+  projectiles = [];
 
-      function syncHud() {
-        state.nausea = Math.max(0, Math.min(100, Math.round(state.nausea)));
-        const bar = document.getElementById("nausea-bar");
-        const pct = document.getElementById("nausea-pct");
-        bar.style.width = state.nausea + "%";
-        pct.textContent = state.nausea + "%";
+  walls.push({ x: 0, y: 0, w: 800, h: 20 });
+  walls.push({ x: 0, y: 460, w: 800, h: 20 });
+  walls.push({ x: 0, y: 0, w: 20, h: 480 });
+  walls.push({ x: 780, y: 0, w: 20, h: 480 });
 
-        if (state.nausea < 40) bar.style.backgroundColor = "#67e87b";
-        else if (state.nausea < 75) bar.style.backgroundColor = "#f5c84c";
-        else bar.style.backgroundColor = "#ff5773";
+  if (num === 0) {
+    document.getElementById('stage-title').textContent = 'STAGE 0 : 튜토리얼 - 방송 켜기 전';
+    player.x = 120; player.y = 240;
+    walls.push({ x: 320, y: 20, w: 24, h: 170 });
+    walls.push({ x: 320, y: 270, w: 24, h: 190 });
 
-        document.getElementById("clue-count").textContent = getClueCount() + "/3";
-        document.getElementById("ammo-count").textContent = state.ammo + "발";
-      }
-
-      function addNausea(delta) {
-        state.nausea += delta;
-        if (delta > 0) {
-          state.shake = 7;
-          playTone(170, 0.11, "sawtooth", 0.045);
-        }
-        syncHud();
-        if (state.nausea >= 100 && !state.finished) {
-          finishGame("bad");
-        }
-      }
-
-      function triggerPose() {
-        if (state.qCooldown > 0 || state.inDialog) return;
-        state.qCooldown = 180;
-        state.qAnim = 48;
-        addNausea(-12);
-        playTone(540, 0.065, "square", 0.04);
-        setTimeout(function () {
-          playTone(740, 0.08, "square", 0.04);
-        }, 70);
-      }
-
-      function showDialog(lines, onComplete) {
-        state.inDialog = true;
-        state.dialogQueue = lines.slice();
-        state.onDialogComplete = onComplete || null;
-        dialogPanel.style.display = "flex";
-        nextDialog();
-      }
-
-      function nextDialog() {
-        if (state.dialogQueue.length === 0) {
-          state.inDialog = false;
-          dialogPanel.style.display = "none";
-          choicesEl.innerHTML = "";
-          if (state.onDialogComplete) {
-            const cb = state.onDialogComplete;
-            state.onDialogComplete = null;
-            cb();
-          }
+    interactables.push({
+      id: 'tea', x: 180, y: 110, w: 32, h: 32, color: '#67e87b', label: '멀미약&보리차',
+      action: () => {
+        if (state.flags.drankTea) {
+          startDialog([{ text: '이미 한 모금 마셨다. "아~ 이제 좀 살 것 같냥~"' }]);
           return;
         }
-
-        const entry = state.dialogQueue.shift();
-        speakerEl.textContent = entry.speaker || "리트밍";
-        bodyEl.textContent = entry.text;
-        choicesEl.innerHTML = "";
-        playTone(430, 0.035, "triangle", 0.03);
-
-        if (entry.choices && entry.choices.length > 0) {
-          state.hasChoices = true;
-          tipEl.style.display = "none";
-          entry.choices.forEach(function (opt) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "choice-btn";
-            btn.textContent = opt.label;
-            btn.addEventListener("click", function (ev) {
-              ev.stopPropagation();
-              state.hasChoices = false;
-              tipEl.style.display = "block";
-              if (opt.nausea) addNausea(opt.nausea);
-              if (opt.setFlag) state.flags[opt.setFlag] = true;
-              if (opt.followUp) {
-                state.dialogQueue = opt.followUp.concat(state.dialogQueue);
-              }
-              nextDialog();
-            });
-            choicesEl.appendChild(btn);
-          });
-        } else {
-          state.hasChoices = false;
-          tipEl.style.display = "block";
-        }
+        state.flags.drankTea = true;
+        addNausea(-10);
+        startDialog([
+          { text: '꿀꺽꿀꺽... 멀미약과 따뜻한 차를 마셨다! (3D 멀미 -10%)' },
+          { text: '[튜토리얼 팁]\n화면 어지러움(3D 멀미)이 100%가 되면 방송이 강제 종료됩니다.\n[Q] 키를 누르면 요정 애기공주 텐션으로 멀미를 살짝 진정시킬 수 있습니다!' }
+        ]);
       }
+    });
 
-      function buildStage(stageIndex) {
-        state.stage = stageIndex;
-        walls = [
-          { x: 0, y: 0, w: 840, h: 18 },
-          { x: 0, y: 462, w: 840, h: 18 },
-          { x: 0, y: 0, w: 18, h: 480 },
-          { x: 822, y: 0, w: 18, h: 480 }
-        ];
-        nodes = [];
-        foes = [];
-        shots = [];
-
-        if (stageIndex === 0) {
-          document.getElementById("hud-stage").textContent = "STAGE 0 : 튜토리얼 (방송 전 세팅)";
-          player.x = 95;
-          player.y = 225;
-          walls.push({ x: 340, y: 18, w: 24, h: 175 });
-          walls.push({ x: 340, y: 275, w: 24, h: 187 });
-
-          nodes.push({
-            x: 160, y: 95, w: 36, h: 36, color: "#67e87b", title: "멀미약&보리차",
-            interact: function () {
-              if (state.flags.drankTea) {
-                showDialog([{ text: '보리차를 한 모금 더 마셨다. "아~ 이제 좀 살 것 같냥~"' }]);
-                return;
+    interactables.push({
+      id: 'dummy', x: 230, y: 340, w: 36, h: 36, color: '#ff9ce3', label: '훈련용 표적',
+      action: () => {
+        startDialog([
+          { text: '훈련용 표적이다. 총알은 0발이지만 눈빛만큼은 프로게이머다.' },
+          {
+            text: '어떻게 제압할까?',
+            choices: [
+              {
+                label: '1. 0발 심리전으로 기선제압한다',
+                flag: 'clearedDummy',
+                reply: [{ text: '리트밍: "스읍... 너 지금 내 각에 걸렸어. 쏘지도 않고 이기는 게 진짜 실력이지~"' }]
+              },
+              {
+                label: '2. 360도 턴을 돌며 에임 연습을 한다',
+                nausea: 15,
+                flag: 'clearedDummy',
+                reply: [{ text: '리트밍: "으뜨뜨뜨드드..! 아 잠깐만 화면 너무 빨리 돌렸어 어지러워!! (멀미 +15%)"' }]
               }
-              state.flags.drankTea = true;
-              addNausea(-10);
-              showDialog([
-                { text: "멀미약과 따뜻한 보리차를 챙겨 마셨다! (3D 멀미 -10%)" },
-                { text: "[튜토리얼 안내]\n3D 멀미가 100%가 되면 나쁜 엔딩이 됩니다.\n[Q] 키를 누르면 애기공주 텐션으로 멀미를 12% 줄일 수 있어요!" }
-              ]);
-            }
-          });
-
-          nodes.push({
-            x: 215, y: 345, w: 38, h: 38, color: "#ff9ce3", title: "훈련용 표적",
-            interact: function () {
-              showDialog([
-                { text: "총알은 0발이지만 눈빛만큼은 랭커인 훈련용 표적이다." },
-                {
-                  text: "어떻게 제압할까?",
-                  choices: [
-                    {
-                      label: "1. 0발 심리전으로 기선제압한다 (히든 힌트)",
-                      setFlag: "zeroAmmoMindset",
-                      followUp: [{ text: '리트밍: "스읍... 너 지금 내 각에 걸렸어. 쏘지도 않고 이기는 게 진짜 실력이지~"' }]
-                    },
-                    {
-                      label: "2. 360도 턴을 돌며 에임 감각을 본다",
-                      nausea: 15,
-                      followUp: [{ text: '리트밍: "으뜨뜨뜨드드..! 잠깐만 화면 너무 빨리 돌렸어 어지러워!! (멀미 +15%)"' }]
-                    }
-                  ]
-                }
-              ]);
-            }
-          });
-
-          nodes.push({
-            x: 685, y: 215, w: 50, h: 50, color: "#9b7aff", title: "방송 송출 PC",
-            interact: function () {
-              showDialog([
-                { text: '방제 입력 완료:\n"3D 멀미는 심하지만 총게임은 못 참지 / 드디어 쉬는날 !"' },
-                { speaker: "채팅창", text: "??? : 뱅온이다!!\n??? : 오늘도 0발 클리어 각인가요" },
-                { text: '리트밍: "자~ 다들 어서 오시고! 인디·스토리 미궁부터 랭크전까지 쭉 달려보자!"' }
-              ], function () { buildStage(1); });
-            }
-          });
-
-          showDialog([
-            { text: "방구석 스튜디오에 오신 걸 환영합니다!\n[WASD / 방향키]로 이동하고, 오브젝트 앞에서 [SPACE / E]로 조사하세요." },
-            { text: "보리차와 표적을 확인한 뒤, 오른쪽 [방송 송출 PC]로 가서 방송을 켜 보세요!" }
-          ]);
-        } else if (stageIndex === 1) {
-          document.getElementById("hud-stage").textContent = "STAGE 1 : 인디·스토리 미궁";
-          player.x = 75;
-          player.y = 225;
-          walls.push({ x: 255, y: 80, w: 24, h: 310 });
-          walls.push({ x: 545, y: 18, w: 24, h: 205 });
-          walls.push({ x: 545, y: 285, w: 24, h: 177 });
-
-          nodes.push({
-            x: 135, y: 85, w: 36, h: 36, color: "#f5c84c", title: "개발자 쪽지",
-            interact: function () {
-              state.flags.foundNote = true;
-              syncHud();
-              showDialog([
-                { speaker: "낡은 개발자 쪽지", text: '"숨겨진 디테일과 단서를 끝까지 챙기는 자만이 진짜 결말을 본다."' },
-                { text: '리트밍: "오~ 역시 인디게임은 이런 디테일 읽는 맛이 있지. 100% 떡밥이다 이거!"' }
-              ]);
-            }
-          });
-
-          nodes.push({
-            x: 405, y: 140, w: 38, h: 38, color: "#61b8ff", title: "변호사 NPC",
-            interact: function () {
-              showDialog([
-                { speaker: "파란 양복 변호사", text: "이의 있소! 앞문을 지나려면 모순을 지적해야 합니다!" },
-                {
-                  text: "그의 주장에서 어떤 점을 짚을까?",
-                  choices: [
-                    {
-                      label: "잔탄이 0발인데 왜 총게임 스트리머죠?",
-                      nausea: 5,
-                      followUp: [
-                        { speaker: "파란 양복 변호사", text: "크윽... 뼈를 때리는 질문이군!" },
-                        { text: '리트밍: "0발로 이기는 게 실력이라고 몇 번을 말해! 입이 거칠어지게 하네 진짜~"' }
-                      ]
-                    },
-                    {
-                      label: "개발자 쪽지의 디테일 단서로 논리를 정리한다",
-                      setFlag: "solvedTrial",
-                      followUp: [
-                        { speaker: "파란 양복 변호사", text: "완벽한 추리입니다! 앞문이 열렸습니다!" },
-                        { text: '리트밍: "거 봐 내가 아까 쪽지 읽을 때부터 각이 보였다니까~"' }
-                      ]
-                    }
-                  ]
-                }
-              ], syncHud);
-            }
-          });
-
-          nodes.push({
-            x: 405, y: 345, w: 38, h: 38, color: "#ff7be5", title: "반짝이는 픽업 석상",
-            interact: function () {
-              if (state.flags.pulledPickup) {
-                showDialog([{ text: "석상에서 이미 황금빛 연출이 지나갔다." }]);
-                return;
-              }
-              state.flags.pulledPickup = true;
-              syncHud();
-              addNausea(-10);
-              playTone(660, 0.09, "square", 0.045);
-              setTimeout(function () {
-                playTone(880, 0.14, "square", 0.045);
-              }, 105);
-              showDialog([
-                { text: "황금빛 연출이 터지며 도파민이 차올랐다!" },
-                { text: '리트밍: "어?! 잠깐만 이거 떴다!! 픽업 성공!! 오늘 텐션 미쳤다!! (멀미 -10%)"' }
-              ]);
-            }
-          });
-
-          nodes.push({
-            x: 725, y: 225, w: 44, h: 44, color: "#9b7aff", title: "다음 스테이지 문",
-            interact: function () {
-              if (!state.flags.solvedTrial) {
-                showDialog([{ text: "문이 잠겨 있다. 위쪽 [변호사 NPC]와 대화해 모순을 해결하자!" }]);
-                return;
-              }
-              showDialog([{ text: "미궁 통과! 이제 총게임 랭크전 복도로 이동합니다!" }], function () {
-                buildStage(2);
-              });
-            }
-          });
-
-          showDialog([
-            { text: "인디·스토리와 서브컬처 분위기가 섞인 미궁입니다." },
-            { text: "단서와 픽업 석상을 확인하고, 변호사 NPC의 질문을 풀어 오른쪽 문으로 가세요!" }
-          ]);
-        } else if (stageIndex === 2) {
-          document.getElementById("hud-stage").textContent = "STAGE 2 : 0발 랭크전 복도";
-          player.x = 70;
-          player.y = 230;
-
-          walls.push({ x: 210, y: 110, w: 32, h: 120 });
-          walls.push({ x: 210, y: 290, w: 32, h: 120 });
-          walls.push({ x: 440, y: 65, w: 32, h: 135 });
-          walls.push({ x: 440, y: 260, w: 32, h: 145 });
-          walls.push({ x: 635, y: 145, w: 32, h: 185 });
-
-          foes.push({ x: 325, y: 80, w: 32, h: 32, vy: 2.3, cd: 0, label: "방패뇨속" });
-          foes.push({ x: 545, y: 380, w: 32, h: 32, vy: -2.6, cd: 42, label: "각폭저격수" });
-
-          nodes.push({
-            x: 740, y: 220, w: 46, h: 46, color: "#67e87b", title: "거점 점령지",
-            interact: function () {
-              showDialog([
-                { text: '리트밍: "야 봤어?! 탄막 피해서 뒤로 싹 돌아 0발 점령! 이게 바로 두뇌 플레이지~"' },
-                { speaker: "채팅창", text: "??? : ㄹㅇ 이걸 안 맞고 지나가네\n??? : 폐급 아님 인정합니다" }
-              ], function () {
-                buildStage(3);
-              });
-            }
-          });
-
-          showDialog([
-            { text: "금요일 저녁 랭크전 복도입니다! 적 탄환에 맞으면 3D 흔들림으로 멀미가 +20% 오릅니다." },
-            { text: "벽 엄폐물을 활용하며 오른쪽 끝 [거점 점령지]까지 돌파하세요!" }
-          ]);
-        } else if (stageIndex === 3) {
-          document.getElementById("hud-stage").textContent = "FINAL STAGE : 어지럼증 대마왕";
-          player.x = 115;
-          player.y = 230;
-
-          nodes.push({
-            x: 615, y: 205, w: 68, h: 68, color: "#ff5773", title: "어지럼증 대마왕",
-            interact: function () {
-              showDialog([
-                { speaker: "어지럼증 대마왕", text: "크크큭... 방송 시간이 쌓여도 3D 멀미 약점은 여전하구나! 이제 방종해라!" },
-                { text: '리트밍: "스읍... 하 야발, 방종은 무슨! 엔딩 크레딧 보기 전엔 못 끝내거든?!"' },
-                {
-                  text: "최후의 한 마디를 선택하자!",
-                  choices: [
-                    {
-                      label: '1. "멀미가 와도 재밌는 게임은 못 참지!"',
-                      followUp: [
-                        { speaker: "어지럼증 대마왕", text: "으아아악! 그 순수한 갓겜 사랑 앞에서는 멀미도 버틸 수 없다!!" },
-                        { text: '리트밍: "크~ 깔끔하게 정리했지! 오늘 방송도 재밌었다!"' }
-                      ]
-                    },
-                    {
-                      label: '2. "요뎡애긔겅듀 텐션으로 화면 흔들림 봉인!"',
-                      followUp: [
-                        { speaker: "어지럼증 대마왕", text: "크헉!! 항마력 충격파가 너무 세다... 소멸한다!!" },
-                        { text: '리트밍: "후후, 이 몸의 귀여움 앞에선 멀미조차 무릎을 꿇는 법이지~"' }
-                      ]
-                    }
-                  ]
-                }
-              ], function () {
-                const isHidden =
-                  state.flags.zeroAmmoMindset &&
-                  getClueCount() === 3 &&
-                  state.nausea <= 25;
-                finishGame(isHidden ? "hidden" : "good");
-              });
-            }
-          });
-
-          showDialog([
-            { text: "최종 보스 [어지럼증 대마왕]이 앞을 가로막고 있습니다." },
-            { text: "다가가서 [SPACE / E]로 마지막 대결을 펼쳐 보세요!" }
-          ]);
-        }
-      }
-
-      function tryNodeInteract() {
-        const reach = 28;
-        for (let i = 0; i < nodes.length; i++) {
-          const nd = nodes[i];
-          if (
-            player.x - reach < nd.x + nd.w &&
-            player.x + player.w + reach > nd.x &&
-            player.y - reach < nd.y + nd.h &&
-            player.y + player.h + reach > nd.y
-          ) {
-            nd.interact();
-            return;
+            ]
           }
-        }
+        ]);
       }
+    });
 
-      function overlaps(a, b) {
-        return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-      }
-
-      function finishGame(endingType) {
-        state.finished = true;
-        const elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
-        const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
-        const ss = String(elapsed % 60).padStart(2, "0");
-
-        startOverlay.style.display = "flex";
-        if (endingType === "bad") {
-          startOverlay.innerHTML =
-            '<h2 style="color:#ff5773;">BAD ENDING : 3D 멀미 강제 방종</h2>' +
-            '<p>"으뜨뜨뜨드드..! 잠깐만 나 진짜 어지러워서 잠시만 누울게...!"<br><br>' +
-            "3D 멀미 게이지가 100%에 도달해 방송이 중단되었습니다.<br>" +
-            "플레이 시간: " + mm + "분 " + ss + "초<br><br>" +
-            "공략 팁: [Q] 키로 멀미를 줄이고, 엄폐물 뒤를 활용하세요!</p>" +
-            '<button type="button" class="btn-start" id="btn-start">▶ 다시 시작하기</button>';
-        } else if (endingType === "hidden") {
-          startOverlay.innerHTML =
-            '<h2 style="color:#f5c84c;">HIDDEN ENDING : 전설의 0발 마스터</h2>' +
-            '<p>"0발 심리전부터 미궁 단서·픽업 석상, 멀미 관리까지 완벽했잖아?! 오늘 방송 레전드 찍었다~"<br><br>' +
-            "모든 숨겨진 조건을 달성해 히든 엔딩에 도달했습니다!<br>" +
-            "단서: <strong>" + getClueCount() + "/3</strong> · 최종 멀미: <strong>" + state.nausea + "%</strong> · 잔탄: <strong>0발</strong> · 기록: <strong>" + mm + "분 " + ss + "초</strong></p>" +
-            '<button type="button" class="btn-start" id="btn-start">▶ 다시 플레이하기</button>';
-        } else {
-          startOverlay.innerHTML =
-            '<h2 style="color:#67e87b;">GOOD ENDING : 오늘도 갓겜이었다!</h2>' +
-            '<p>"멀미가 와도 재밌는 게임은 못 참지! 오늘도 같이 달려줘서 고마워~"<br><br>' +
-            "어지럼증 대마왕을 물리치고 좋은 엔딩을 봤습니다!<br>" +
-            "단서: <strong>" + getClueCount() + "/3</strong> · 최종 멀미: <strong>" + state.nausea + "%</strong> · 잔탄: <strong>0발</strong> · 기록: <strong>" + mm + "분 " + ss + "초</strong></p>" +
-            '<button type="button" class="btn-start" id="btn-start">▶ 히든 엔딩 도전하기</button>';
-        }
-      }
-
-      function startSession() {
-        state.active = true;
-        state.finished = false;
-        state.nausea = 10;
-        state.ammo = 0;
-        state.inDialog = false;
-        state.hasChoices = false;
-        state.dialogQueue = [];
-        state.onDialogComplete = null;
-        state.qCooldown = 0;
-        state.qAnim = 0;
-        state.shake = 0;
-        state.startedAt = Date.now();
-        state.flags = {
-          drankTea: false,
-          zeroAmmoMindset: false,
-          foundNote: false,
-          pulledPickup: false,
-          solvedTrial: false
-        };
-        dialogPanel.style.display = "none";
-        startOverlay.style.display = "none";
-        syncHud();
-        buildStage(0);
-      }
-
-      document.addEventListener("click", function (e) {
-        if (!e.target) return;
-        if (e.target.id === "btn-start" || e.target.id === "btn-reset") {
-          e.preventDefault();
-          startSession();
+    interactables.push({
+      id: 'pc', x: 640, y: 220, w: 48, h: 48, color: '#8e6cef', label: '방송 송출 PC',
+      action: () => {
+        if (!state.flags.clearedDummy) {
+          startDialog([{ text: '송출 PC다. 방송을 켜기 전에 아래쪽 [훈련용 표적]에서 몸부터 풀자!' }]);
           return;
         }
-        if (e.target.closest && e.target.closest("#dialog-panel")) {
-          if (state.inDialog && !state.hasChoices) {
-            nextDialog();
+        startDialog([
+          { text: '방송 타이틀 입력 완료:\n"🌸 3D 멀미는 심하지만 총게임은 못 참지 / 드디어 쉬는날 !"' },
+          { name: '채팅창', text: '??? : 뱅온이다!!\n??? : 애기공주님 오늘도 멀미약 드셨나요' },
+          { text: '리트밍: "자~ 다들 어서 오시고! 오늘 인디 스토리 찍먹하고 랭크까지 깔끔하게 간다!"' }
+        ], () => loadStage(1));
+      }
+    });
+
+    startDialog([
+      { text: '방구석 스튜디오에 오신 걸 환영합니다!\n[WASD] 또는 [방향키]로 이동, [SPACE]로 물건을 조사할 수 있습니다.' },
+      { text: '우선 방 안의 물건들을 확인하고 오른쪽 방의 [방송 송출 PC]를 켜 봅시다!' }
+    ]);
+  }
+
+  else if (num === 1) {
+    document.getElementById('stage-title').textContent = 'STAGE 1 : 인디·스토리의 미궁';
+    player.x = 80; player.y = 230;
+    walls.push({ x: 250, y: 90, w: 24, h: 300 });
+    walls.push({ x: 520, y: 20, w: 24, h: 200 });
+    walls.push({ x: 520, y: 280, w: 24, h: 180 });
+
+    interactables.push({
+      id: 'note', x: 140, y: 90, w: 32, h: 32, color: '#f5c84c', label: '수상한 쪽지',
+      action: () => {
+        state.flags.readNote = true;
+        startDialog([
+          { name: '낡은 개발자 노트', text: '[이 게임의 비밀]\n"정면 돌파보다 구석에 숨겨진 기믹과 선택지 디테일을 보는 자가 진실을 얻는다."' },
+          { text: '리트밍: "오~ 역시 인디게임은 이런 디테일 읽는 맛이 있지. 100% 떡밥이다 이거."' }
+        ]);
+      }
+    });
+
+    interactables.push({
+      id: 'detective', x: 390, y: 150, w: 36, h: 36, color: '#61b8ff', label: '변호사 NPC',
+      action: () => {
+        startDialog([
+          { name: '파란 양복 변호사', text: '이의 있소! 이 문을 지나가려면 모순을 지적해야 합니다!' },
+          {
+            text: '그의 주장에서 모순은 무엇일까?',
+            choices: [
+              {
+                label: '총알이 0발인데 왜 총게임 스트리머죠?',
+                nausea: 5,
+                reply: [
+                  { name: '파란 양복 변호사', text: '크헉...! 본질적인 팩트를 찔렀군!' },
+                  { text: '리트밍: "0발로 이기는 게 실력이라고 몇 번을 말해! 입이 거칠어지게 하네 진짜~"' }
+                ]
+              },
+              {
+                label: '수상한 쪽지의 기믹 단서를 들이민다',
+                flag: 'solvedPuzzle',
+                reply: [
+                  { name: '파란 양복 변호사', text: '완벽한 증거입니다! 봉인된 중앙 문이 열렸습니다!' },
+                  { text: '리트밍: "거 봐 내가 아까 쪽지 읽을 때부터 알아봤다니까~ 천재 추리 가보자고!"' }
+                ]
+              }
+            ]
           }
-        }
-      });
+        ]);
+      }
+    });
 
-      window.addEventListener("keydown", function (e) {
-        const code = e.key.toLowerCase();
-        keys[code] = true;
-
-        if (!state.active && (code === "enter" || code === " ")) {
-          e.preventDefault();
-          startSession();
+    interactables.push({
+      id: 'gacha', x: 390, y: 340, w: 36, h: 36, color: '#ff7be5', label: '반짝이는 픽업 석상',
+      action: () => {
+        if (state.flags.pulledGacha) {
+          startDialog([{ text: '석상이 조용하다. 이미 금빛 연출을 보았다!' }]);
           return;
         }
-
-        if (code === " " || code === "enter" || code === "e") {
-          if (state.inDialog && !state.hasChoices) {
-            e.preventDefault();
-            nextDialog();
-          } else if (!state.inDialog && state.active && !state.finished) {
-            e.preventDefault();
-            tryNodeInteract();
-          }
-        }
-
-        if (code === "q" && !state.inDialog && state.active && !state.finished) {
-          triggerPose();
-        }
-      });
-
-      window.addEventListener("keyup", function (e) {
-        keys[e.key.toLowerCase()] = false;
-      });
-
-      function update() {
-        if (!state.active || state.finished) return;
-
-        const sec = Math.floor((Date.now() - state.startedAt) / 1000);
-        document.getElementById("play-clock").textContent =
-          String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
-
-        if (state.qCooldown > 0) state.qCooldown--;
-        if (state.qAnim > 0) state.qAnim--;
-        if (state.shake > 0) state.shake--;
-
-        if (state.inDialog) return;
-
-        let dx = 0;
-        let dy = 0;
-        if (keys["w"] || keys["arrowup"]) dy -= player.speed;
-        if (keys["s"] || keys["arrowdown"]) dy += player.speed;
-        if (keys["a"] || keys["arrowleft"]) dx -= player.speed;
-        if (keys["d"] || keys["arrowright"]) dx += player.speed;
-
-        player.x += dx;
-        for (let i = 0; i < walls.length; i++) {
-          if (overlaps(player, walls[i])) player.x -= dx;
-        }
-        player.y += dy;
-        for (let i = 0; i < walls.length; i++) {
-          if (overlaps(player, walls[i])) player.y -= dy;
-        }
-
-        if (state.stage === 2) {
-          for (let i = 0; i < foes.length; i++) {
-            const foe = foes[i];
-            foe.y += foe.vy;
-            if (foe.y < 36 || foe.y > 414) foe.vy *= -1;
-            foe.cd++;
-            if (foe.cd >= 85) {
-              foe.cd = 0;
-              shots.push({ x: foe.x - 10, y: foe.y + 12, w: 10, h: 6, vx: -4.3 });
-              playTone(255, 0.04, "sawtooth", 0.025);
-            }
-          }
-
-          for (let i = shots.length - 1; i >= 0; i--) {
-            const sh = shots[i];
-            sh.x += sh.vx;
-            const blocked = walls.some(function (w) { return overlaps(sh, w); });
-            if (blocked || sh.x < 0) {
-              shots.splice(i, 1);
-              continue;
-            }
-            if (overlaps(sh, player)) {
-              shots.splice(i, 1);
-              addNausea(20);
-            }
-          }
-        }
+        state.flags.pulledGacha = true;
+        addNausea(-10);
+        playBeep(660, 0.1); setTimeout(() => playBeep(880, 0.15), 110);
+        startDialog([
+          { text: '지이잉— 콰광!! 황금빛 줄기가 하늘로 솟구쳤다!!' },
+          { text: '리트밍: "어?! 잠깐만 이거 떴다!! 떴어!! 릴리 픽업 비틱 성공!! 도파민 풀충전!! (멀미 -10%)"' }
+        ]);
       }
+    });
 
-      function render() {
-        ctx.save();
-        if (state.shake > 0) {
-          ctx.translate((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
+    interactables.push({
+      id: 'portal1', x: 690, y: 230, w: 42, h: 42, color: '#8e6cef', label: '다음 챕터 문',
+      action: () => {
+        if (!state.flags.solvedPuzzle) {
+          startDialog([{ text: '문에 자물쇠가 걸려 있다. 위쪽의 [변호사 NPC]와 대화해 모순을 해결하자!' }]);
+          return;
         }
-
-        ctx.fillStyle = "#141120";
-        ctx.fillRect(0, 0, 840, 480);
-
-        ctx.strokeStyle = "#211b36";
-        for (let x = 0; x < 840; x += 40) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, 480);
-          ctx.stroke();
-        }
-        for (let y = 0; y < 480; y += 40) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(840, y);
-          ctx.stroke();
-        }
-
-        ctx.fillStyle = "#4a3a7a";
-        for (let i = 0; i < walls.length; i++) {
-          const w = walls[i];
-          ctx.fillRect(w.x, w.y, w.w, w.h);
-        }
-
-        ctx.font = "bold 13px sans-serif";
-        ctx.textAlign = "center";
-        for (let i = 0; i < nodes.length; i++) {
-          const nd = nodes[i];
-          ctx.fillStyle = nd.color;
-          ctx.fillRect(nd.x, nd.y, nd.w, nd.h);
-          ctx.strokeStyle = "#ffffff";
-          ctx.strokeRect(nd.x, nd.y, nd.w, nd.h);
-          ctx.fillStyle = "#f5f2fc";
-          ctx.fillText(nd.title, nd.x + nd.w / 2, nd.y - 7);
-        }
-
-        for (let i = 0; i < foes.length; i++) {
-          const foe = foes[i];
-          ctx.fillStyle = "#ff5773";
-          ctx.fillRect(foe.x, foe.y, foe.w, foe.h);
-          ctx.fillStyle = "#ffd6de";
-          ctx.fillText(foe.label, foe.x + foe.w / 2, foe.y - 7);
-        }
-
-        ctx.fillStyle = "#ffe066";
-        for (let i = 0; i < shots.length; i++) {
-          const sh = shots[i];
-          ctx.fillRect(sh.x, sh.y, sh.w, sh.h);
-        }
-
-        ctx.fillStyle = "#ffb3ec";
-        ctx.fillRect(player.x, player.y, player.w, player.h);
-        ctx.fillStyle = "#ffe066";
-        ctx.fillRect(player.x + 9, player.y - 6, 12, 6);
-        ctx.fillStyle = "#141120";
-        ctx.fillRect(player.x + 7, player.y + 11, 4, 5);
-        ctx.fillRect(player.x + 19, player.y + 11, 4, 5);
-
-        if (state.qAnim > 0) {
-          ctx.fillStyle = "#ff9ce3";
-          ctx.font = "bold 14px sans-serif";
-          ctx.fillText("요뎡애긔겅듀 텐션 UP (-12%)", player.x + 15, player.y - 16);
-        }
-
-        ctx.restore();
+        startDialog([
+          { text: '스토리 챕터 클리어! 이제 메인 이벤트인 총게임(FPS) 랭크전 구역으로 넘어간다!' }
+        ], () => loadStage(2));
       }
+    });
 
-      function loop() {
-        update();
-        render();
-        requestAnimationFrame(loop);
+    startDialog([
+      { text: '인디·스토리와 서브컬처 세계관이 뒤섞인 미궁에 들어왔습니다.' },
+      { text: '수상한 단서를 조사하고, NPC의 수수께끼를 풀어 오른쪽 문으로 나아가세요!' }
+    ]);
+  }
+
+  else if (num === 2) {
+    document.getElementById('stage-title').textContent = 'STAGE 2 : 0발의 랭크전 복도';
+    player.x = 70; player.y = 240;
+
+    walls.push({ x: 200, y: 120, w: 30, h: 110 });
+    walls.push({ x: 200, y: 290, w: 30, h: 110 });
+    walls.push({ x: 420, y: 70, w: 30, h: 130 });
+    walls.push({ x: 420, y: 260, w: 30, h: 140 });
+    walls.push({ x: 610, y: 150, w: 30, h: 180 });
+
+    enemies.push({ x: 310, y: 80, w: 30, h: 30, vy: 2.2, shootTimer: 0, name: '방패뇨속' });
+    enemies.push({ x: 520, y: 380, w: 30, h: 30, vy: -2.5, shootTimer: 45, name: '각폭저격수' });
+
+    interactables.push({
+      id: 'goal2', x: 710, y: 225, w: 44, h: 44, color: '#67e87b', label: '거점 점령지',
+      action: () => {
+        startDialog([
+          { text: '리트밍: "야 봤어?! 방패병 시선 돌리고 뒤로 싹 돌아서 0발 거점 점령! 이게 바로 두뇌 파밍이지~"' },
+          { name: '채팅창', text: '??? : ㄹㅇ 이걸 어떻게 안 맞고 지나감?\n??? : 폐급 아님 인정합니다' }
+        ], () => loadStage(3));
       }
+    });
 
-      syncHud();
-      loop();
-    })();
-  </script>
+    startDialog([
+      { text: '금요일 저녁 랭크전 복도입니다!\n적의 고무탄에 맞으면 3D 화면 흔들림으로 멀미 게이지가 급상승합니다.' },
+      { text: '엄폐물 뒤로 숨으면서 오른쪽 끝 [거점 점령지]까지 총알 0발로 돌파하세요!' }
+    ]);
+  }
+
+  else if (num === 3) {
+    document.getElementById('stage-title').textContent = 'FINAL STAGE : 어지럼증 대마왕';
+    player.x = 120; player.y = 240;
+
+    interactables.push({
+      id: 'boss', x: 580, y: 210, w: 64, h: 64, color: '#ff5773', label: '어지럼증 대마왕',
+      action: () => {
+        startDialog([
+          { name: '어지럼증 대마왕', text: '크크큭... 4,100시간이나 방송을 해놓고 아직도 시야각(FOV) 멀미에 시달리다니! 포기하고 방종해라!' },
+          { text: '리트밍: "스읍... 하 야발, 방종은 무슨! 아직 오늘 엔딩 크레딧 못 봤거든?!"' },
+          {
+            text: '최후의 일격! 어떤 멘트로 대마왕을 무너뜨릴까?',
+            choices: [
+              {
+                label: '1. "멀미는 나도 게임이 재밌으면 그만이야!" (진심 어택)',
+                reply: [
+                  { name: '어지럼증 대마왕', text: '으아아악! 그 순수한 갓겜 사랑 앞에서는 어지럼증도 소멸한다!!' },
+                  { text: '리트밍: "크~ 깔끔했다! 오늘 방송도 레전드 찍었네!"' }
+                ]
+              },
+              {
+                label: '2. "요뎡애긔겅듀 파워로 시야각 고정시켜 버린다냥!" (컨셉 어택)',
+                reply: [
+                  { name: '어지럼증 대마왕', text: '크헉!! 항마력 데미지가 너무 강해서 버틸 수가 없다!!' },
+                  { text: '리트밍: "후후, 이 몸의 귀여움 앞에선 멀미조차 무릎을 꿇는 법이지~"' }
+                ]
+              }
+            ]
+          }
+        ], () => triggerEnding('clear'));
+      }
+    });
+
+    startDialog([
+      { text: '드디어 마지막 관문! 거대한 [어지럼증 대마왕]이 앞을 막고 있습니다.' },
+      { text: '다가가서 [SPACE]로 최후의 승부를 겨루세요!' }
+    ]);
+  }
+}
+
+function interact() {
+  const reach = 26;
+  for (const obj of interactables) {
+    if (
+      player.x - reach < obj.x + obj.w &&
+      player.x + player.w + reach > obj.x &&
+      player.y - reach < obj.y + obj.h &&
+      player.y + player.h + reach > obj.y
+    ) {
+      obj.action();
+      return;
+    }
+  }
+}
+
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function triggerEnding(type) {
+  state.gameOver = true;
+  const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+  const min = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const sec = String(elapsed % 60).padStart(2, '0');
+
+  overlay.style.display = 'flex';
+  if (type === 'nausea') {
+    overlay.innerHTML = `
+      <h1>😵 BAD ENDING : 3D 멀미 엔딩 😵</h1>
+      <p>
+        "으뜨뜨뜨드드..! 잠깐만 나 진짜 어지러워서 누워야겠어...!"<br><br>
+        멀미 게이지가 100%에 도달해 긴급 휴방이 선언되었습니다.<br>
+        플레이 타임: ${min}분 ${sec}초<br><br>
+        💡 팁: [Q] 키로 허세 텐션을 유지하고, 엄폐물을 활용해 보세요!
+      </p>
+      <button type="button" class="main-btn" onclick="location.reload()">🔄 다시 방송 켜기</button>
+    `;
+  } else {
+    const rank = state.nausea <= 30 ? 'S랭크 (요정 애기공주 완벽 클리어)' : 'A랭크 (멀미 이겨낸 갓겜 스트리머)';
+    overlay.innerHTML = `
+      <h1>🎉 TRUE ENDING : 오늘도 0발 캐리 완료! 🎉</h1>
+      <p>
+        어지럼증 대마왕을 물리치고 무사히 엔딩 크레딧을 올렸습니다!<br><br>
+        "다들 오늘도 같이 달려줘서 고마워! 내일도 재밌는 게임 들고 올게~ 밍바!"<br><br>
+        📊 최종 결과: <b>${rank}</b><br>
+        😵 남은 멀미 지수: <b>${state.nausea}%</b> | 🔫 사용한 총알: <b>0발</b> | ⏱️ 기록: <b>${min}분 ${sec}초</b>
+      </p>
+      <button type="button" class="main-btn" onclick="location.reload()">🔁 한 판 더 하기</button>
+    `;
+  }
+}
+
+function update() {
+  if (!state.started || state.gameOver) return;
+
+  const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+  document.getElementById('timer-txt').textContent =
+    String(Math.floor(elapsed / 60)).padStart(2, '0') + ':' + String(elapsed % 60).padStart(2, '0');
+
+  if (state.poseCooldown > 0) state.poseCooldown--;
+  if (state.poseAnim > 0) state.poseAnim--;
+  if (state.shake > 0) state.shake--;
+
+  if (state.inDialog) return;
+
+  let dx = 0, dy = 0;
+  if (keys['w'] || keys['arrowup']) { dy -= player.speed; player.dir = 'up'; }
+  if (keys['s'] || keys['arrowdown']) { dy += player.speed; player.dir = 'down'; }
+  if (keys['a'] || keys['arrowleft']) { dx -= player.speed; player.dir = 'left'; }
+  if (keys['d'] || keys['arrowright']) { dx += player.speed; player.dir = 'right'; }
+
+  player.x += dx;
+  for (const w of walls) {
+    if (rectsOverlap(player, w)) player.x -= dx;
+  }
+  player.y += dy;
+  for (const w of walls) {
+    if (rectsOverlap(player, w)) player.y -= dy;
+  }
+
+  if (state.stage === 2) {
+    for (const en of enemies) {
+      en.y += en.vy;
+      if (en.y < 40 || en.y > 410) en.vy *= -1;
+      en.shootTimer++;
+      if (en.shootTimer >= 85) {
+        en.shootTimer = 0;
+        projectiles.push({ x: en.x - 10, y: en.y + 10, w: 10, h: 6, vx: -4.2 });
+        playBeep(260, 0.04, 'sawtooth', 0.03);
+      }
+    }
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+      p.x += p.vx;
+      let hitWall = walls.some(w => rectsOverlap(p, w));
+      if (hitWall || p.x < 0) {
+        projectiles.splice(i, 1);
+        continue;
+      }
+      if (rectsOverlap(p, player)) {
+        projectiles.splice(i, 1);
+        addNausea(20);
+      }
+    }
+  }
+}
+
+function draw() {
+  ctx.save();
+  if (state.shake > 0) {
+    ctx.translate((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
+  }
+
+  ctx.fillStyle = '#181524';
+  ctx.fillRect(0, 0, 800, 480);
+  ctx.strokeStyle = '#221e33';
+  for (let x = 0; x < 800; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 480); ctx.stroke();
+  }
+  for (let y = 0; y < 480; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(800, y); ctx.stroke();
+  }
+
+  ctx.fillStyle = '#483b73';
+  for (const w of walls) {
+    ctx.fillRect(w.x, w.y, w.w, w.h);
+  }
+
+  ctx.font = '13px DungGeunMo, sans-serif';
+  ctx.textAlign = 'center';
+  for (const obj of interactables) {
+    ctx.fillStyle = obj.color;
+    ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
+    ctx.fillStyle = '#f3effa';
+    ctx.fillText(obj.label, obj.x + obj.w / 2, obj.y - 6);
+  }
+
+  for (const en of enemies) {
+    ctx.fillStyle = '#ff5773';
+    ctx.fillRect(en.x, en.y, en.w, en.h);
+    ctx.fillStyle = '#ffd1d9';
+    ctx.fillText(en.name, en.x + en.w / 2, en.y - 6);
+  }
+  ctx.fillStyle = '#ffe066';
+  for (const p of projectiles) {
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+  }
+
+  ctx.fillStyle = '#ffb3ec';
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+  ctx.fillStyle = '#ffe066';
+  ctx.fillRect(player.x + 8, player.y - 6, 12, 6);
+  ctx.fillStyle = '#1b1826';
+  ctx.fillRect(player.x + 6, player.y + 10, 4, 5);
+  ctx.fillRect(player.x + 18, player.y + 10, 4, 5);
+
+  if (state.poseAnim > 0) {
+    ctx.fillStyle = '#ff9ce3';
+    ctx.font = '15px DungGeunMo, sans-serif';
+    ctx.fillText('✨ 요뎡애긔겅듀 텐션 UP! (-12%) ✨', player.x + 14, player.y - 16);
+  }
+
+  ctx.restore();
+}
+
+function startGame() {
+  overlay.style.display = 'none';
+  state.started = true;
+  state.gameOver = false;
+  state.startTime = Date.now();
+  updateHUD();
+  loadStage(0);
+}
+
+if (startBtn) {
+  startBtn.addEventListener('click', startGame);
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
 </body>
 </html>
+   
