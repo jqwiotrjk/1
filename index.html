@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>야간 미술관: 밍의 아카이브 | Ritming Tsukuru Fan Game</title>
+<style>
+  :root {
+    --bg: #0b0a10;
+    --panel: #15131f;
+    --panel-2: #1f1c2e;
+    --border: #433a63;
+    --wine: #8f4868;
+    --rose: #e89ac7;
+    --cream: #f6efe9;
+    --muted: #afa4c9;
+    --gold: #e7c26b;
+  }
+
+  * {
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(143, 72, 104, 0.16), transparent 45%),
+      radial-gradient(circle at 80% 85%, rgba(92, 74, 145, 0.16), transparent 45%),
+      var(--bg);
+    color: var(--cream);
+    font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 18px 14px 36px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 13px 18px;
+  }
+
+  .title-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    color: var(--rose);
+    background: rgba(232, 154, 199, 0.12);
+    border: 1px solid rgba(232, 154, 199, 0.38);
+    padding: 4px 9px;
+    border-radius: 999px;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .reset-btn {
+    background: var(--panel-2);
+    color: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--rose);
+    background: #2b2640;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--panel-2);
+    border-left: 2px solid var(--border);
+    border-right: 2px solid var(--border);
+    padding: 9px 18px;
+    font-size: 13.5px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .status-bar strong {
+    color: var(--cream);
+  }
+
+  .live-pill {
+    color: #ff7b9c;
+  }
+
+  .live-pill.off {
+    color: var(--muted);
+  }
+
+  .screen-box {
+    position: relative;
+    background: #100e18;
+    border: 2px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  }
+
+  #scene {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+
+  #msg-box {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    min-height: 126px;
+    background: rgba(14, 12, 22, 0.96);
+    border: 2px solid #9d86c9;
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 20;
+  }
+
+  #msg-who {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--rose);
+    margin-bottom: 6px;
+  }
+
+  #msg-who.chat {
+    color: #8fd3ff;
+  }
+
+  #msg-who.guide {
+    color: var(--gold);
+  }
+
+  #msg-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--cream);
+    white-space: pre-line;
+  }
+
+  #msg-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .choice {
+    background: #27223b;
+    color: var(--cream);
+    border: 1px solid #9d86c9;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .choice:hover {
+    background: #3b3359;
+  }
+
+  #msg-next {
+    align-self: flex-end;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  #title-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 9, 17, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26px 20px;
+    z-index: 30;
+  }
+
+  #title-overlay h2 {
+    margin: 0 0 10px;
+    font-size: 26px;
+    color: var(--rose);
+    font-weight: 800;
+  }
+
+  #title-overlay p {
+    margin: 0;
+    max-width: 540px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .start-button {
+    margin-top: 22px;
+    background: linear-gradient(135deg, #8f4868, #5d3b8c);
+    color: var(--cream);
+    border: 2px solid #e7b9d4;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 16.5px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .start-button:hover {
+    filter: brightness(1.12);
+  }
+
+  .controls {
+    margin-top: 13px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .controls strong {
+    color: var(--cream);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="title-area">
+        <span class="tag">TSUKURU GALLERY</span>
+        <h1 class="title">야간 미술관: 밍의 아카이브</h1>
+      </div>
+      <button type="button" class="reset-btn" id="btn-reset">처음부터</button>
+    </header>
+
+    <div class="status-bar">
+      <div>장소: <strong id="hud-area">스트리머의 방</strong></div>
+      <div>방송: <strong id="hud-live" class="live-pill off">대기 중</strong></div>
+      <div>추억 감상: <strong id="hud-mem">0/3</strong> · <strong id="hud-time">00:00</strong></div>
+    </div>
+
+    <main class="screen-box">
+      <canvas id="scene" width="840" height="480"></canvas>
+
+      <div id="msg-box">
+        <div>
+          <div id="msg-who">리트밍</div>
+          <div id="msg-text"></div>
+          <div id="msg-choices"></div>
+        </div>
+        <div id="msg-next">[SPACE / E / 클릭] 계속</div>
+      </div>
+
+      <section id="title-overlay">
+        <h2>야간 미술관: 밍의 아카이브</h2>
+        <p>
+          방에서 눈을 뜬 리트밍이 방송을 켜고, 그동안 플레이했던 인디 게임들의<br>
+          기억이 걸린 밤의 미술관을 시청자들과 함께 걸으며 추억을 되짚는 쯔꾸르 풍 게임입니다.
+        </p>
+        <button type="button" class="start-button" id="btn-start">눈 뜨기 (START)</button>
+      </section>
+    </main>
+
+    <footer class="controls">
+      <div><strong>이동:</strong> W A S D (방향키 가능)</div>
+      <div><strong>빠르게 걷기:</strong> SHIFT</div>
+      <div><strong>조사·대화:</strong> SPACE / E / 클릭</div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const WALK_SPEED = 1.2;
+      const RUN_SPEED = 2.3;
+
+      const canvas = document.getElementById("scene");
+      const ctx = canvas.getContext("2d");
+      const titleOverlay = document.getElementById("title-overlay");
+      const msgBox = document.getElementById("msg-box");
+      const msgWho = document.getElementById("msg-who");
+      const msgText = document.getElementById("msg-text");
+      const msgChoices = document.getElementById("msg-choices");
+      const msgNext = document.getElementById("msg-next");
+
+      let audioCtx = null;
+      function playSoftTone(freq, dur, wave, vol) {
+        try {
+          const AudioCls = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCls) return;
+          if (!audioCtx) audioCtx = new AudioCls();
+          if (audioCtx.state === "suspended") audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = wave || "sine";
+          osc.frequency.value = freq;
+          gain.gain.value = vol || 0.025;
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + (dur || 0.08));
+        } catch (_) {}
+      }
+
+      const state = {
+        playing: false,
+        ended: false,
+        room: "bedroom", // "bedroom" | "gallery"
+        liveOn: false,
+        startedAt: 0,
+        inMsg: false,
+        choosing: false,
+        queue: [],
+        onDone: null,
+        running: false,
+        seen: {
+          city: false,
+          dweller: false,
+          redball: false
+        }
+      };
+
+      const player = {
+        x: 155,
+        y: 235,
+        w: 24,
+        h: 32,
+        dir: "down",
+        stepPhase: 0
+      };
+
+      const keys = {};
+      let walls = [];
+      let props = [];
+      let paintings = [];
+      let exitZone = null;
+
+      function seenCount() {
+        let n = 0;
+        if (state.seen.city) n++;
+        if (state.seen.dweller) n++;
+        if (state.seen.redball) n++;
+        return n;
+      }
+
+      function updateStatus() {
+        document.getElementById("hud-area").textContent =
+          state.room === "bedroom" ? "스트리머의 방" : "밤의 회상 미술관";
+        const liveEl = document.getElementById("hud-live");
+        if (state.liveOn) {
+          liveEl.textContent = "방송 중";
+          liveEl.className = "live-pill";
+        } else {
+          liveEl.textContent = "대기 중";
+          liveEl.className = "live-pill off";
+        }
+        document.getElementById("hud-mem").textContent = seenCount() + "/3";
+      }
+
+      function openMessages(list, cb) {
+        state.inMsg = true;
+        state.running = false;
+        state.queue = list.slice();
+        state.onDone = cb || null;
+        msgBox.style.display = "flex";
+        advanceMessage();
+      }
+
+      function advanceMessage() {
+        if (state.queue.length === 0) {
+          state.inMsg = false;
+          msgBox.style.display = "none";
+          msgChoices.innerHTML = "";
+          if (state.onDone) {
+            const fn = state.onDone;
+            state.onDone = null;
+            fn();
+          }
+          return;
+        }
+
+        const item = state.queue.shift();
+        const role = item.role || "ritming";
+        msgWho.textContent = item.who || "리트밍";
+        msgWho.className = role === "chat" ? "chat" : (role === "guide" ? "guide" : "");
+        msgText.textContent = item.text;
+        msgChoices.innerHTML = "";
+        playSoftTone(role === "guide" ? 520 : 380, 0.045, "triangle", 0.025);
+
+        if (item.choices && item.choices.length > 0) {
+          state.choosing = true;
+          msgNext.style.display = "none";
+          item.choices.forEach(function (opt) {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "choice";
+            b.textContent = opt.label;
+            b.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              state.choosing = false;
+              msgNext.style.display = "block";
+              if (opt.next) {
+                state.queue = opt.next.concat(state.queue);
+              }
+              advanceMessage();
+            });
+            msgChoices.appendChild(b);
+          });
+        } else {
+          state.choosing = false;
+          msgNext.style.display = "block";
+        }
+      }
+
+      function enterBedroom() {
+        state.room = "bedroom";
+        updateStatus();
+        player.x = 165;
+        player.y = 225;
+        player.dir = "down";
+        exitZone = null;
+        paintings = [];
+
+        walls = [
+          { x: 0, y: 0, w: 840, h: 72 },
+          { x: 0, y: 428, w: 840, h: 52 },
+          { x: 0, y: 0, w: 56, h: 480 },
+          { x: 784, y: 0, w: 56, h: 480 },
+          // 침대
+          { x: 95, y: 105, w: 120, h: 72 },
+          // 책장
+          { x: 280, y: 72, w: 130, h: 36 }
+        ];
+
+        props = [
+          {
+            x: 110, y: 118, w: 90, h: 48, color: "#765898", label: "침대",
+            action: function () {
+              openMessages([
+                { text: "방금 일어난 따끈한 침대다. 푹신하긴 하지만 지금은 밖으로 나가고 싶다." }
+              ]);
+            }
+          },
+          {
+            x: 565, y: 110, w: 84, h: 42, color: "#4c6b9c", label: "방송 데스크",
+            action: function () {
+              if (!state.liveOn) {
+                openMessages([
+                  { text: "모니터 앞에 마이크가 놓여 있다. 오늘 밤엔 조용히 미술관을 같이 걸어볼까?" },
+                  {
+                    text: "방송을 켤까?",
+                    choices: [
+                      {
+                        label: "방송 켜기 (시청자와 함께 미술관 입장)",
+                        next: [
+                          {
+                            role: "ritming",
+                            text: '리트밍: "자~ 다들 어서 오시고! 오늘 밤은 왠지 옛날 게임 생각나는 미술관에 와봤어."'
+                          },
+                          {
+                            role: "chat",
+                            who: "채팅창",
+                            text: "??? : 뱅온이다!!\n??? : 분위기 왜 이렇게 이브 느낌 나지\n??? : 추억 회상 가보자고"
+                          },
+                          {
+                            role: "ritming",
+                            text: '리트밍: "오른쪽 문으로 나가면 미술관이 이어져 있을 거야. 천천히 둘러보자~"'
+                          }
+                        ]
+                      },
+                      {
+                        label: "잠깐 숨 고르기",
+                        next: [{ text: "리트밍: \"응, 천천히 준비되면 다시 눌러줘.\"" }]
+                      }
+                    ]
+                  }
+                ], function () {
+                  // 선택지 중 방송 켜기를 골랐는지 확인
+                  if (msgText.textContent.indexOf("오른쪽 문으로 나가면") !== -1) {
+                    state.liveOn = true;
+                    updateStatus();
+                  }
+                });
+              } else {
+                openMessages([
+                  { role: "chat", who: "채팅창", text: "??? : 오른쪽 문 열려 있네!\n??? : 전시작 세 개 다 보고 갈게요" },
+                  { text: '리트밍: "좋아, 오른쪽 문으로 넘어가자!"' }
+                ]);
+              }
+            }
+          },
+          {
+            x: 735, y: 205, w: 46, h: 90, color: "#8f4868", label: "미술관 문",
+            action: function () {
+              if (!state.liveOn) {
+                openMessages([
+                  { text: "문을 열기 전에 위쪽 [방송 데스크]에서 방송부터 켜고 나가자!" }
+                ]);
+                return;
+              }
+              openMessages([
+                { text: "문 너머로 은은한 조명과 낯익은 작품 냄새가 풍긴다." }
+              ], enterGallery);
+            }
+          }
+        ];
+
+        openMessages([
+          {
+            role: "guide",
+            who: "안내",
+            text: "WASD로 움직일 수 있습니다.\nSHIFT를 눌러 빠르게 움직일 수 있어요.\n(오브젝트 앞에서 SPACE / E 로 조사)"
+          },
+          {
+            text: '리트밍: "음... 여기가 내 방이지. 우선 [방송 데스크]에 가서 방송부터 켜자."'
+          }
+        ]);
+      }
+
+      function enterGallery() {
+        state.room = "gallery";
+        updateStatus();
+        player.x = 75;
+        player.y = 225;
+        player.dir = "right";
+        props = [];
+
+        walls = [
+          { x: 0, y: 0, w: 840, h: 72 },
+          { x: 0, y: 428, w: 840, h: 52 },
+          { x: 0, y: 0, w: 46, h: 480 },
+          { x: 794, y: 0, w: 46, h: 480 },
+          // 미술관 중앙 낮은 파티션
+          { x: 395, y: 185, w: 50, h: 110 }
+        ];
+
+        paintings = [
+          {
+            id: "city",
+            x: 175, y: 74, w: 72, h: 44,
+            frameColor: "#d9b878",
+            artBg: "#1c2544",
+            accent: "#ff85b3",
+            title: "《도시의 불빛》",
+            inspect: function () {
+              state.seen.city = true;
+              updateStatus();
+              openMessages([
+                { text: '작품 제목: 《도시의 불빛》 — 젖은 아스팔트와 작은 창문 불빛이 그려져 있다.' },
+                { text: '리트밍: "아 이거... 《호프 인 더 시티》 할 때 기억난다. 도시 속 사람 사는 얘기 하나하나가 은근히 묵직했잖아."' },
+                { role: "chat", who: "채팅창", text: "??? : 밤에 이거 할 때 과몰입 진짜 심했지\n??? : 골목 분위기 딱 그 느낌임" },
+                { text: '리트밍: "맞아, 그날도 새벽까지 대사 읽으면서 여운 남았던 게 아직도 선명하네."' }
+              ]);
+            }
+          },
+          {
+            id: "dweller",
+            x: 445, y: 74, w: 72, h: 44,
+            frameColor: "#d9b878",
+            artBg: "#18141c",
+            accent: "#f2b866",
+            title: "《심연의 거주자》",
+            inspect: function () {
+              state.seen.dweller = true;
+              updateStatus();
+              openMessages([
+                { text: '작품 제목: 《심연의 거주자》 — 촛불 옆에 웅크린 그림자가 섬세하게 담겨 있다.' },
+                { text: '리트밍: "《웰 드웰러》 기억나네 ㅋㅋ 3D 멀미 살짝씩 올라오면서도 분위기 못 참아서 끝까지 봤던 거."' },
+                { role: "chat", who: "채팅창", text: "??? : 멀미약 챙겨 먹으면서 했던 날 ㅋㅋ\n??? : 연출 진짜 좋았음" },
+                { text: '리트밍: "멀미는 좀 힘들어도 이런 인디만의 색깔이 있으면 또 손이 가더라."' }
+              ]);
+            }
+          },
+          {
+            id: "redball",
+            x: 590, y: 382, w: 72, h: 44,
+            frameColor: "#d9b878",
+            artBg: "#281b2e",
+            accent: "#ff5c6c",
+            title: "《붉은 공을 찾아서》",
+            inspect: function () {
+              state.seen.redball = true;
+              updateStatus();
+              openMessages([
+                { text: '작품 제목: 《붉은 공을 찾아서》 — 엉뚱한 길 끝에 붉은 공 하나가 굴러가고 있다.' },
+                { text: '리트밍: "ㅋㅋㅋ 《Where\'s My Red Ball?》 생각난다. 뻔할 줄 알았는데 기믹 때문에 허둥지둥했던 거."' },
+                { role: "chat", who: "채팅창", text: "??? : 이때 클립 아직도 돌려봄\n??? : 갑자기 당황하던 목소리 레전드" },
+                { text: '리트밍: "갑자기 예상 못 한 트릭 나오면 나도 모르게 빵 터지니까 그게 또 재밌지~"' }
+              ]);
+            }
+          }
+        ];
+
+        exitZone = {
+          x: 735, y: 205, w: 48, h: 80, label: "미술관 출구",
+          action: function () {
+            if (seenCount() < 3) {
+              openMessages([
+                { text: '리트밍: "아직 못 본 그림이 남아 있네. (' + seenCount() + '/3) 다 보고 출구로 가자!"' }
+              ]);
+              return;
+            }
+            openMessages([
+              { text: '리트밍: "오늘 미술관에 걸린 작품들 보니까 예전 방송했던 기억들이 새록새록 떠오른다."' },
+              { role: "chat", who: "채팅창", text: "??? : 같이 걸으니까 시간 순삭이네\n??? : 오늘 방송 진짜 좋았다" },
+              { text: '리트밍: "같이 걸어줘서 고마워. 추억도 남았으니 이제 오늘 밤 산책은 여기까지 하자~"' }
+            ], showFinishScreen);
+          }
+        };
+
+        openMessages([
+          { text: '조용한 밤의 미술관에 들어왔다. 벽에 걸린 그림들을 가까이 가서 [SPACE / E]로 감상해 보자.' }
+        ]);
+      }
+
+      function showFinishScreen() {
+        state.ended = true;
+        const sec = Math.floor((Date.now() - state.startedAt) / 1000);
+        const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+        const ss = String(sec % 60).padStart(2, "0");
+
+        titleOverlay.style.display = "flex";
+        titleOverlay.innerHTML =
+          "<h2>추억 회상 완료</h2>" +
+          "<p>시청자들과 함께 미술관의 작품들을 둘러보며 지난 인디 게임의 기억을 나눴습니다.<br><br>" +
+          "감상한 작품: <strong>" + seenCount() + "/3</strong> · 머문 시간: <strong>" + mm + "분 " + ss + "초</strong></p>" +
+          '<button type="button" class="start-button" id="btn-start">다시 둘러보기</button>';
+      }
+
+      function startNew() {
+        state.playing = true;
+        state.ended = false;
+        state.liveOn = false;
+        state.inMsg = false;
+        state.choosing = false;
+        state.queue = [];
+        state.onDone = null;
+        state.running = false;
+        state.seen = { city: false, dweller: false, redball: false };
+        state.startedAt = Date.now();
+        msgBox.style.display = "none";
+        titleOverlay.style.display = "none";
+        enterBedroom();
+      }
+
+      function overlaps(a, b) {
+        return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+      }
+
+      function tryInteract() {
+        const pad = 24;
+        for (let i = 0; i < paintings.length; i++) {
+          const p = paintings[i];
+          if (
+            player.x - pad < p.x + p.w &&
+            player.x + player.w + pad > p.x &&
+            player.y - pad < p.y + p.h &&
+            player.y + player.h + pad > p.y
+          ) {
+            p.inspect();
+            return;
+          }
+        }
+        for (let i = 0; i < props.length; i++) {
+          const pr = props[i];
+          if (
+            player.x - pad < pr.x + pr.w &&
+            player.x + player.w + pad > pr.x &&
+            player.y - pad < pr.y + pr.h &&
+            player.y + player.h + pad > pr.y
+          ) {
+            pr.action();
+            return;
+          }
+        }
+        if (exitZone) {
+          const ez = exitZone;
+          if (
+            player.x - pad < ez.x + ez.w &&
+            player.x + player.w + pad > ez.x &&
+            player.y - pad < ez.y + ez.h &&
+            player.y + player.h + pad > ez.y
+          ) {
+            ez.action();
+          }
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        if (!e.target) return;
+        if (e.target.id === "btn-start" || e.target.id === "btn-reset") {
+          e.preventDefault();
+          startNew();
+          return;
+        }
+        if (e.target.closest && e.target.closest("#msg-box")) {
+          if (state.inMsg && !state.choosing) {
+            advanceMessage();
+          }
+        }
+      });
+
+      window.addEventListener("keydown", function (e) {
+        const k = e.key.toLowerCase();
+        keys[k] = true;
+        if (e.shiftKey) keys["shift"] = true;
+
+        if (!state.playing && (k === "enter" || k === " ")) {
+          e.preventDefault();
+          startNew();
+          return;
+        }
+
+        if (k === " " || k === "enter" || k === "e") {
+          if (state.inMsg && !state.choosing) {
+            e.preventDefault();
+            advanceMessage();
+          } else if (!state.inMsg && state.playing && !state.ended) {
+            e.preventDefault();
+            tryInteract();
+          }
+        }
+      });
+
+      window.addEventListener("keyup", function (e) {
+        const k = e.key.toLowerCase();
+        keys[k] = false;
+        if (!e.shiftKey) keys["shift"] = false;
+      });
+
+      window.addEventListener("blur", function () {
+        Object.keys(keys).forEach(function (key) { keys[key] = false; });
+        state.running = false;
+      });
+
+      function tick() {
+        if (!state.playing || state.ended) return;
+
+        const sec = Math.floor((Date.now() - state.startedAt) / 1000);
+        document.getElementById("hud-time").textContent =
+          String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
+
+        if (state.inMsg) {
+          state.running = false;
+          return;
+        }
+
+        let vx = 0;
+        let vy = 0;
+        if (keys["w"] || keys["arrowup"]) { vy -= 1; player.dir = "up"; }
+        if (keys["s"] || keys["arrowdown"]) { vy += 1; player.dir = "down"; }
+        if (keys["a"] || keys["arrowleft"]) { vx -= 1; player.dir = "left"; }
+        if (keys["d"] || keys["arrowright"]) { vx += 1; player.dir = "right"; }
+
+        const moving = vx !== 0 || vy !== 0;
+        state.running = Boolean(keys["shift"] && moving);
+        const spd = state.running ? RUN_SPEED : WALK_SPEED;
+
+        if (vx !== 0 && vy !== 0) {
+          const inv = 0.7071;
+          vx *= inv;
+          vy *= inv;
+        }
+
+        const dx = vx * spd;
+        const dy = vy * spd;
+
+        player.x += dx;
+        for (let i = 0; i < walls.length; i++) {
+          if (overlaps(player, walls[i])) player.x -= dx;
+        }
+
+        player.y += dy;
+        for (let i = 0; i < walls.length; i++) {
+          if (overlaps(player, walls[i])) player.y -= dy;
+        }
+
+        if (moving) {
+          player.stepPhase += state.running ? 0.24 : 0.14;
+        } else {
+          player.stepPhase = 0;
+        }
+      }
+
+      function render() {
+        ctx.fillStyle = "#110f1b";
+        ctx.fillRect(0, 0, 840, 480);
+
+        // 바닥 타일
+        ctx.fillStyle = state.room === "bedroom" ? "#1b1729" : "#161322";
+        ctx.fillRect(46, 72, 748, 356);
+
+        ctx.strokeStyle = "#241f36";
+        for (let x = 46; x < 794; x += 28) {
+          ctx.beginPath();
+          ctx.moveTo(x, 72);
+          ctx.lineTo(x, 428);
+          ctx.stroke();
+        }
+        for (let y = 72; y < 428; y += 28) {
+          ctx.beginPath();
+          ctx.moveTo(46, y);
+          ctx.lineTo(794, y);
+          ctx.stroke();
+        }
+
+        // 상단 벽
+        ctx.fillStyle = "#2b2440";
+        ctx.fillRect(0, 0, 840, 72);
+        ctx.fillStyle = "#433a63";
+        ctx.fillRect(0, 68, 840, 4);
+
+        // 파티션 벽
+        for (let i = 0; i < walls.length; i++) {
+          const w = walls[i];
+          if (w.y >= 72 && w.y < 428 && w.x > 50 && w.x < 780) {
+            ctx.fillStyle = "#362e52";
+            ctx.fillRect(w.x, w.y, w.w, w.h);
+            ctx.strokeStyle = "#62548f";
+            ctx.strokeRect(w.x, w.y, w.w, w.h);
+          }
+        }
+
+        ctx.textAlign = "center";
+        ctx.font = "bold 12px sans-serif";
+
+        // 전시 그림(이브 스타일 액자)
+        for (let i = 0; i < paintings.length; i++) {
+          const p = paintings[i];
+          const visited = state.seen[p.id];
+          ctx.fillStyle = p.frameColor;
+          ctx.fillRect(p.x - 4, p.y - 4, p.w + 8, p.h + 8);
+          ctx.fillStyle = p.artBg;
+          ctx.fillRect(p.x, p.y, p.w, p.h);
+
+          // 그림 속 포인트
+          ctx.fillStyle = p.accent;
+          ctx.beginPath();
+          ctx.arc(p.x + p.w * 0.5, p.y + p.h * 0.52, 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = visited ? "#d4c7f2" : "#fff2b2";
+          ctx.fillText(p.title + (visited ? " ✓" : ""), p.x + p.w / 2, p.y + p.h + 17);
+        }
+
+        // 방 오브젝트
+        for (let i = 0; i < props.length; i++) {
+          const pr = props[i];
+          ctx.fillStyle = pr.color;
+          ctx.fillRect(pr.x, pr.y, pr.w, pr.h);
+          ctx.strokeStyle = "#b8a8de";
+          ctx.strokeRect(pr.x, pr.y, pr.w, pr.h);
+          ctx.fillStyle = "#f6efe9";
+          ctx.fillText(pr.label, pr.x + pr.w / 2, pr.y - 7);
+        }
+
+        // 미술관 출구
+        if (exitZone) {
+          ctx.fillStyle = "#4d386b";
+          ctx.fillRect(exitZone.x, exitZone.y, exitZone.w, exitZone.h);
+          ctx.strokeStyle = "#d9b878";
+          ctx.strokeRect(exitZone.x, exitZone.y, exitZone.w, exitZone.h);
+          ctx.fillStyle = "#f6efe9";
+          ctx.fillText(exitZone.label, exitZone.x + exitZone.w / 2, exitZone.y - 7);
+        }
+
+        // 리트밍 도트 캐릭터(쯔꾸르 비율)
+        const bob = Math.sin(player.stepPhase) * 2.2;
+        const px = Math.round(player.x);
+        const py = Math.round(player.y + bob);
+
+        // 발
+        ctx.fillStyle = "#2d243b";
+        ctx.fillRect(px + 4, py + 26, 6, 6);
+        ctx.fillRect(px + 14, py + 26, 6, 6);
+
+        // 몸통(니트/원피스 느낌)
+        ctx.fillStyle = state.liveOn ? "#c87da6" : "#8c7bb8";
+        ctx.fillRect(px + 5, py + 14, 14, 13);
+
+        // 머리
+        ctx.fillStyle = "#ffe3d1";
+        ctx.fillRect(px + 4, py + 2, 16, 13);
+
+        // 헤어 포인트
+        ctx.fillStyle = "#5b3a78";
+        ctx.fillRect(px + 3, py, 18, 5);
+
+        // 눈
+        ctx.fillStyle = "#181424";
+        if (player.dir !== "up") {
+          const eyeShift = player.dir === "left" ? -2 : (player.dir === "right" ? 2 : 0);
+          ctx.fillRect(px + 7 + eyeShift, py + 8, 2.5, 4);
+          ctx.fillRect(px + 14 + eyeShift, py + 8, 2.5, 4);
+        }
+
+        if (state.running) {
+          ctx.fillStyle = "#e89ac7";
+          ctx.font = "bold 11px sans-serif";
+          ctx.fillText("빠른 걸음", px + player.w / 2, py + player.h + 15);
+        }
+      }
+
+      function loop() {
+        tick();
+        render();
+        requestAnimationFrame(loop);
+      }
+
+      updateStatus();
+      loop();
+    })();
+  </script>
+</body>
+</html>
